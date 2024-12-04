@@ -1,10 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');  // Import cors
 const postRoutes = require('./routes/postRoutes');  // Import routes
 
 const app = express();
 const port = 5000;
+
+// Cấu hình CORS
+app.use(cors({
+  origin: 'http://localhost:3000',  // Cho phép truy cập từ localhost:3000
+  methods: ['GET', 'POST'],  // Chỉ cho phép GET và POST
+  allowedHeaders: ['Content-Type'],  // Chỉ cho phép header Content-Type
+}));
 
 // Middleware để xử lý JSON body
 app.use(express.json());
