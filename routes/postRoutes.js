@@ -1,12 +1,12 @@
 const express = require('express');
-const Post = require('../models/Post');  // Import model Post
+const Post = require('../models/Post'); // Import model Post
 
 const router = express.Router();
 
 // API POST: Thêm bài viết
 router.post('/', async (req, res) => {
   try {
-    const { title, thumbnail, description, content, author, category } = req.body; // Thêm category
+    const { title, thumbnail, description, content, author, category } = req.body;
 
     const newPost = new Post({
       title,
@@ -14,11 +14,11 @@ router.post('/', async (req, res) => {
       description,
       content,
       author,
-      category,  // Thêm category vào model
+      category,
     });
 
-    await newPost.save();  // Lưu vào MongoDB
-    res.status(201).json(newPost);  // Trả về bài viết đã được tạo
+    await newPost.save(); // Lưu vào MongoDB
+    res.status(201).json(newPost); // Trả về bài viết đã được tạo
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -27,15 +27,15 @@ router.post('/', async (req, res) => {
 // API GET: Lấy tất cả bài viết hoặc lọc theo category
 router.get('/', async (req, res) => {
   try {
-    const { category } = req.query;  // Lấy category từ query (nếu có)
+    const { category } = req.query; // Lấy category từ query (nếu có)
     let filter = {};
 
     if (category) {
-      filter.category = category;  // Lọc theo category nếu được cung cấp
+      filter.category = category; // Lọc theo category nếu được cung cấp
     }
 
-    const posts = await Post.find(filter);  // Lấy bài viết theo bộ lọc
-    res.status(200).json(posts);  // Trả về danh sách bài viết
+    const posts = await Post.find(filter); // Lấy bài viết theo bộ lọc
+    res.status(200).json(posts); // Trả về danh sách bài viết
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -44,13 +44,23 @@ router.get('/', async (req, res) => {
 // API GET: Lấy bài viết theo ID
 router.get('/:id', async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);  // Lấy bài viết theo ID
+    const post = await Post.findById(req.params.id); // Lấy bài viết theo ID
 
     if (!post) {
       return res.status(404).json({ message: 'Bài viết không tồn tại' });
     }
 
-    res.status(200).json(post);  // Trả về bài viết theo ID
+    res.status(200).json(post); // Trả về bài viết theo ID
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// API GET: Lấy 10 bài viết mới nhất
+router.get('/recent', async (req, res) => {
+  try {
+    const recentPosts = await Post.find().sort({ date: -1 }).limit(10); // Sắp xếp bài viết theo thời gian
+    res.status(200).json(recentPosts); // Trả về danh sách bài viết mới nhất
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -59,19 +69,19 @@ router.get('/:id', async (req, res) => {
 // API PUT: Cập nhật bài viết
 router.put('/:id', async (req, res) => {
   try {
-    const { title, thumbnail, description, content, author, category } = req.body; // Thêm category
+    const { title, thumbnail, description, content, author, category } = req.body;
 
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.id,
-      { title, thumbnail, description, content, author, category },  // Cập nhật category
-      { new: true }  // Trả về bài viết đã được cập nhật
+      { title, thumbnail, description, content, author, category },
+      { new: true } // Trả về bài viết đã được cập nhật
     );
 
     if (!updatedPost) {
       return res.status(404).json({ message: 'Bài viết không tồn tại' });
     }
 
-    res.status(200).json(updatedPost);  // Trả về bài viết đã cập nhật
+    res.status(200).json(updatedPost); // Trả về bài viết đã cập nhật
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -80,13 +90,13 @@ router.put('/:id', async (req, res) => {
 // API DELETE: Xóa bài viết
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);  // Xóa bài viết theo ID
+    const deletedPost = await Post.findByIdAndDelete(req.params.id); // Xóa bài viết theo ID
 
     if (!deletedPost) {
       return res.status(404).json({ message: 'Bài viết không tồn tại' });
     }
 
-    res.status(200).json({ message: 'Bài viết đã được xóa' });  // Trả về thông báo xóa thành công
+    res.status(200).json({ message: 'Bài viết đã được xóa' }); // Trả về thông báo xóa thành công
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
