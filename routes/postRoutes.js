@@ -6,7 +6,7 @@ const router = express.Router();
 // API POST: Thêm bài viết
 router.post('/', async (req, res) => {
   try {
-    const { title, thumbnail, description, content, author } = req.body;
+    const { title, thumbnail, description, content, author, category } = req.body; // Thêm category
 
     const newPost = new Post({
       title,
@@ -14,6 +14,7 @@ router.post('/', async (req, res) => {
       description,
       content,
       author,
+      category,  // Thêm category vào model
     });
 
     await newPost.save();  // Lưu vào MongoDB
@@ -23,10 +24,17 @@ router.post('/', async (req, res) => {
   }
 });
 
-// API GET: Lấy tất cả bài viết
+// API GET: Lấy tất cả bài viết hoặc lọc theo category
 router.get('/', async (req, res) => {
   try {
-    const posts = await Post.find();  // Lấy tất cả bài viết
+    const { category } = req.query;  // Lấy category từ query (nếu có)
+    let filter = {};
+
+    if (category) {
+      filter.category = category;  // Lọc theo category nếu được cung cấp
+    }
+
+    const posts = await Post.find(filter);  // Lấy bài viết theo bộ lọc
     res.status(200).json(posts);  // Trả về danh sách bài viết
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -51,11 +59,11 @@ router.get('/:id', async (req, res) => {
 // API PUT: Cập nhật bài viết
 router.put('/:id', async (req, res) => {
   try {
-    const { title, thumbnail, description, content, author } = req.body;
+    const { title, thumbnail, description, content, author, category } = req.body; // Thêm category
 
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.id,
-      { title, thumbnail, description, content, author },
+      { title, thumbnail, description, content, author, category },  // Cập nhật category
       { new: true }  // Trả về bài viết đã được cập nhật
     );
 
