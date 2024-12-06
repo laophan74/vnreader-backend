@@ -58,16 +58,17 @@ router.get('/:id', async (req, res) => {
 
 // API GET: Lấy 10 bài viết mới nhất
 router.get('/recent', async (req, res) => {
-  try {
-    const recentPosts = await Post.find().sort({ date: -1 }).limit(10); // Sắp xếp bài viết theo ngày giảm dần và lấy 10 bài mới nhất
-    if (!recentPosts) {
-      return res.status(404).json({ message: 'No posts found' });
-    }
-    res.status(200).json(recentPosts); // Trả về 10 bài viết mới nhất
-  } catch (error) {
-    console.error('Error fetching recent posts:', error);
-    res.status(500).json({ message: 'Server error: ' + error.message });
-  }
+  return res.status(404).json({ message: 'No posts found' });
+  // try {
+  //   const recentPosts = await Post.find().sort({ date: -1 }).limit(10);
+  //   if (!recentPosts) {
+  //     return res.status(404).json({ message: 'No posts found' });
+  //   }
+  //   res.status(200).json(recentPosts); // Trả về 10 bài viết mới nhất
+  // } catch (error) {
+  //   console.error('Error fetching recent posts:', error);
+  //   res.status(500).json({ message: 'Server error: ' + error.message });
+  // }
 });
 
 // API PUT: Cập nhật bài viết
