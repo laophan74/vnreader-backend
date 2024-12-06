@@ -9,7 +9,7 @@ const port = 5000;
 
 // Cấu hình CORS
 app.use(cors({
-  origin: 'http://localhost:3000',  // Cho phép truy cập từ localhost:3000
+  origin: ['https://vnreader.vercel.app', 'http://localhost:3000'],  // Cho phép truy cập từ localhost:3000
   methods: ['GET', 'POST'],  // Chỉ cho phép GET và POST
   allowedHeaders: ['Content-Type'],  // Chỉ cho phép header Content-Type
 }));
